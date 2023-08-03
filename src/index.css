@@ -1,0 +1,138 @@
+* {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    box-sizing: border-box;/* box-sizing containes padding and border */
+}
+html {
+    font-size: 16px;
+    background-color: #343541;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    min-width: 100vw;
+}
+#container {
+    height: 100vh;
+    width: 100vw;
+    /* border: 1px solid black; */
+    display: flex;
+    flex-direction: column;
+}
+#list {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* overflow-y: scroll; */
+    overflow: auto;
+}
+
+#list::after {
+    content: "";
+    min-height: 200px;
+}
+
+.list-item {
+    /* border: 1px solid gray; */
+    /* background-color: rgb(155, 177, 179); */
+    
+    width: 100%;
+    padding: 2rem;
+    content-visibility: auto;
+    flex-shrink: 0;/* no flex shrink */
+    white-space: pre-wrap;/* just as the original shape of white-space and line-break */
+    color: aliceblue;
+}
+textarea {
+    width: 60vw;
+    /* border: 1px solid black; */
+    border-radius: 15px;
+    padding: 15px;
+    resize: none;
+    background-color: #40414F;
+    font-size: 1.2rem;
+    color: rgb(209, 225, 226);
+    outline: none;/* Remove the default border style */
+    position: absolute;
+    bottom: 3rem;
+}
+
+textarea::-webkit-scrollbar {
+    width: 0;
+}
+
+main {
+    /* min-height: 80vh; */
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;    
+    align-items: center;
+    padding: 30px;
+}
+.intro {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    margin-top: 5rem;
+}
+
+.title-1{
+    font-size: 4rem;
+    color: rgb(52,110,80);
+    text-align: center;
+}
+.title-2 {
+    font-size: 2rem;
+    color: rgb(209, 225, 226);
+    text-align: center;
+}
+.paragraph {
+    margin-top: 2rem;
+    width: 60vw;
+    font-size: 1rem;
+    color: rgb(209, 225, 226);
+    white-space: normal;
+    /* text-align: center; */
+    line-height: 2rem;
+}
+
+footer {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    width: 100%;
+    bottom: 10px;
+    color: rgb(209, 225, 226);
+    flex-wrap: wrap;
+}
+
+footer input {
+    background-color: rgb(166, 179, 180);
+    border: 1px solid gray;
+    border-radius: 0.1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+footer select {
+    background-color: rgb(166, 179, 180);
+}
+footer select option {
+    background-color: rgb(209, 225, 226);
+}
+
+footer a {
+    color: aquamarine;
+}
+
