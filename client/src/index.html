@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="index.css" rel="stylesheet">
+    <title>主页</title>
+</head>
+<body>
+    <div id ="container">
+        <div class="intro">
+            <div class="title-1">AI Chat</div>
+            <div class="title-2">AI 聊天机器人</div>
+            <div class="paragraph">
+            OpenAI API接口对接。支持上下文连续对话。默认提交最近 6 次上下文（3 次对话），如果自己填写 API，则支持无限次上下文提交，并且可以使用 gpt-4* 模型（前提是你的 API 已支持 GPT-4）。在聊了很多条后建议手动清除，否则会加速消耗你自己的 API token
+            <br>
+            本站内置的 API 完全免费，不盈利，会在能力范围内尽量保持可用
+            <br>
+            如果自带的接口挂了，可输入自定义 API Key，本站不会记录 API 信息，纯前端保存。API Key 可访问官网进行获取（如何访问请自行解决）
+            </div>
+        </div>
+        <div id = "list"></div>
+    </div>
+    <textarea placeholder="Ask me anything...(Shift + Enter = line break)" rows="1"></textarea>
+    <footer>
+        <select>
+            <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+            <option value="gpt-3.5-turbo-0301">gpt-3.5-turbo-0301</option>
+            <option value="gpt-3.5-turbo-0613">gpt-3.5-turbo-0613</option>
+            <option value="gpt-3.5-turbo-16k">gpt-3.5-turbo-16k</option>
+            <option value="gpt-3.5-turbo-16k-0613">gpt-3.5-turbo-16k-0613</option>
+            <option value="gpt-4">gpt-4</option>
+            <option value="gpt-4-0314">gpt-4-0314</option>
+            <option value="gpt-4-0613">gpt-4-0613</option>
+            <option value="gpt-4-32k">gpt-4-32k</option>
+            <option value="gpt-4-32k-0314">gpt-4-32k-0314</option>
+        </select>
+        <input type="text" placeholder=" your apiKey"/>
+        <div>Powered by <a href="https://openai.com/" target="_blank">OpenAI</a></div>
+    </footer>
+</body>
+<script src="index.js"></script>
+</html>
