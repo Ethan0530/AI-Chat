@@ -52,7 +52,7 @@ textArea.addEventListener('keydown', (e) => {
         textArea.readOnly = true;
 
         getData(getKey(),getModel(),text).then((data) => {
-            if(data.error !== undefined){
+            if(data.error !== undefined || data.errno !== undefined){
                 return JSON.stringify(data);
             }else return data.choices[0].message.content;
         }).then((data) => {
@@ -61,7 +61,7 @@ textArea.addEventListener('keydown', (e) => {
             textArea.readOnly = false;
             refreshScroll(listContainer); 
         }).catch((err) => {
-            listContainer.appendChild(createListItem(err));
+            listContainer.appendChild(createListItem(err),{backgroundColor:"#3F414D"});
             textArea.readOnly = false;
             refreshScroll(listContainer);    
         })
