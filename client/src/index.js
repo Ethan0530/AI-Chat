@@ -153,7 +153,7 @@ selectElement.addEventListener('click', (e) => {
 })
 
 async function getData(key,model,content) {
-    let response = await fetch("http://localhost:3000",{
+    let response = await fetch("/",{
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
