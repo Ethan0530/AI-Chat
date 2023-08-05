@@ -46,6 +46,7 @@ textArea.addEventListener('keydown', (e) => {
         let child = createListItem("user: " + text);
         listContainer.appendChild(child);
         textArea.value = '';
+        resizeHeight();
         textArea.readOnly = true;
 
         let answer = createListItem("Bot: ",{backgroundColor:"#3F414D"});
@@ -126,3 +127,91 @@ async function getAIResponse(apiKey,model,content){
 
     return response.json();
 }
+
+// 监听textarea的输入事件（input），每次输入时调整高度，还有点击enter时重置高度，但不超过最大高度
+function resizeHeight() {
+    // textArea.style.height = 'auto'; // 首先重置高度，以便计算新高度
+    textArea.style.height = 'auto';
+    const scrollHeight = textArea.scrollHeight;
+    //这里必须计算才能拿到max-height,因为不是直接定义在index.html的内联样式中，也没有显式定义
+    const computedStyle = window.getComputedStyle(textArea);
+    const computedStyleHeight = computedStyle.getPropertyValue('max-height');
+    const maxHeight = parseInt(computedStyleHeight);
+    if(scrollHeight <= maxHeight){
+        textArea.style.height = scrollHeight + "px";
+    }else{
+        textArea.style.height = maxHeight + "px";
+    }
+}
+
+textArea.addEventListener('input', resizeHeight);
+
+function init(){
+    const btn = document.querySelector('.btn');
+    const inputContainer = document.querySelector('.input-container');
+    const computedStyle = window.getComputedStyle(inputContainer);
+    const computedStyleHeight = computedStyle.getPropertyValue('height');
+
+    btn.style.height = computedStyleHeight;
+}
+
+init();
+
+const btn = document.querySelector('.btn');
+btn.addEventListener('click', () => {
+    const text = textArea.value.trim();
+    if(text === '') return
+
+    //remove the default init element
+    if(sign === true){
+        const intro = document.querySelector(".intro");
+        intro.remove();
+        sign = false;
+    }
+
+    let child = createListItem("user: " + text);
+    listContainer.appendChild(child);
+    textArea.value = '';
+    resizeHeight();
+    textArea.readOnly = true;
+
+    let answer = createListItem("Bot: ",{backgroundColor:"#3F414D"});
+    listContainer.appendChild(answer);
+
+    let count = 0;
+    let interval = setInterval(() => {
+        if(count === 5){
+            answer.innerHTML = "Bot: ";
+            count = 0
+        }
+        answer.innerHTML += "."
+        count++;
+    },1000)
+
+    getAIResponse(getInputApiKey(),getModel(),text)
+    .then((data) => {
+
+        clearInterval(interval);
+        answer.innerHTML = "Bot: ";
+
+        if(data.error !== undefined){
+            return JSON.stringify(data);
+        }else return data.choices[0].message.content;
+    }).then((data) => {
+        typeText(answer,data);
+
+        textArea.readOnly = false;
+        setTimeout(() => {
+            refreshScroll(listContainer);
+        },20)
+    }).catch((err) => {
+        clearInterval(interval);
+        answer.innerHTML = "Bot: ";
+        typeText(answer,data);
+
+        textArea.readOnly = false;
+        setTimeout(() => {
+            refreshScroll(listContainer);
+        },20)
+    })
+})

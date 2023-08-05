@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="./index.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/092d68c717.js" crossorigin="anonymous"></script>
     <title>主页</title>
 </head>
 <body>
@@ -18,7 +19,12 @@
         </div>
         <div id = "list"></div>
     </div>
-    <textarea placeholder="Ask me anything...(Shift + Enter = line break)" rows="1"></textarea>
+    <div class="input-container">
+        <textarea placeholder="Ask me anything..." rows="1"></textarea>
+        <div class="btn-container"><button class="btn">
+            <i class="fa-regular fa-paper-plane" style="font-size: 1.5rem;"></i>
+        </button></div>
+    </div>
     <footer>
         <select>
             <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
