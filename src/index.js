@@ -1,22 +1,6 @@
-const config = {
-    length: 20,
-    key: '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'
-}
-
 let sign = true;
 
 const listContainer = document.querySelector('#list');
-
-(function init(){
-    // let items = [];
-    // for(let i = 1;i <= config.length;i++){
-    //     items.push("item"+i)
-    // }
-    // items.forEach(item => {
-    //     let child = createListItem(item);
-    //     listContainer.appendChild(child);
-    // })
-})();
 
 //create new list item element and return it
 function createListItem(text,styleOptions){
@@ -28,19 +12,6 @@ function createListItem(text,styleOptions){
     }
     return listItem;
 }
-
-// const observer = new MutationObserver(function(mutationList) {
-//     mutationList.forEach(mutation => {
-//         if(mutation.type === 'childList'){
-//             setTimeout(() => {
-//                 listContainer.scrollTop = listContainer.scrollHeight;
-//             },5)
-//         }
-//     })
-// })
-
-//observe the changes in the sub-elements of the list
-// observer.observe(listContainer,{childList:true})
 
 function refreshScroll(element){
     element.scrollTop = element.scrollHeight;
@@ -57,14 +28,6 @@ function getModel(){
 function getInputApiKey(){
     const inputElement = document.querySelector('input');
     return inputElement.value;
-}
-
-function getKey(){
-    let key = getInputApiKey().trim();
-    if(key.length === 0){
-        key = config.key;
-    }
-    return key;
 }
 
 textArea.addEventListener('keydown', (e) => {
@@ -85,20 +48,40 @@ textArea.addEventListener('keydown', (e) => {
         textArea.value = '';
         textArea.readOnly = true;
 
-        getAIResponse(getKey(),getModel(),text)
+        let answer = createListItem("Bot: ",{backgroundColor:"#3F414D"});
+        listContainer.appendChild(answer);
+
+        let count = 0;
+        let interval = setInterval(() => {
+            if(count === 5){
+                answer.innerHTML = "Bot: ";
+                count = 0
+            }
+            answer.innerHTML += "."
+            count++;
+        },1000)
+
+        getAIResponse(getInputApiKey(),getModel(),text)
         .then((data) => {
+
+            clearInterval(interval);
+            answer.innerHTML = "Bot: ";
+
             if(data.error !== undefined){
                 return JSON.stringify(data);
             }else return data.choices[0].message.content;
         }).then((data) => {
-            let answer = createListItem("Bot: " + data,{backgroundColor:"#3F414D"});
-            listContainer.appendChild(answer);
+            typeText(answer,data);
+
             textArea.readOnly = false;
             setTimeout(() => {
                 refreshScroll(listContainer);
             },20)
         }).catch((err) => {
-            listContainer.appendChild(createListItem(err));
+            clearInterval(interval);
+            answer.innerHTML = "Bot: ";
+            typeText(answer,data);
+
             textArea.readOnly = false;
             setTimeout(() => {
                 refreshScroll(listContainer);
@@ -116,18 +99,7 @@ function typeText(element,text){
         }else{
             clearInterval(interval);
         }
-    }, 20)
-}
-
-/**
- * Generates a unique identifier.
- * @returns {string}
- */
-function genetateUniqueId(){
-    const time = Date.now();
-    const randomNumber = Math.random();
-    const hexadecimalString = randomNumber.toString(16);
-    return `id-${time}-${hexadecimalString}`;
+    }, 10)
 }
 
 /**
@@ -154,22 +126,3 @@ async function getAIResponse(apiKey,model,content){
 
     return response.json();
 }
-
-
-
-const selectElement = document.querySelector('select');
-selectElement.addEventListener('click', (e) => {
-    if(getInputApiKey().trim().length === 0){
-        selectElement.options[5].disabled = true;
-        selectElement.options[6].disabled = true;
-        selectElement.options[7].disabled = true;
-        selectElement.options[8].disabled = true;
-        selectElement.options[9].disabled = true;
-    }else{
-        selectElement.options[5].disabled = false;
-        selectElement.options[6].disabled = false;
-        selectElement.options[7].disabled = false;
-        selectElement.options[8].disabled = false;
-        selectElement.options[9].disabled = false;
-    } 
-})

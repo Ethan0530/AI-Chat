@@ -1,2 +1,2 @@
 # AI-Chat
-A simple static page working with the OpenAI API
+A simple static page working with the OpenAI API. No backend.
