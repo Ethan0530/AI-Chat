@@ -26,7 +26,7 @@ textArea.addEventListener('keydown', (e) => {
 textArea.addEventListener('input', resizeHeight);
 
 selectElement.addEventListener('click', (e) => {
-    if(getKey().trim().length === 0){
+    if(getInputApiKey().trim().length === 0){
         selectElement.options[5].disabled = true;
         selectElement.options[6].disabled = true;
         selectElement.options[7].disabled = true;

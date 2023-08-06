@@ -98,16 +98,6 @@ textarea::-webkit-scrollbar {
     color: #fafafa;
 }
 
-main {
-    /* min-height: 80vh; */
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;    
-    align-items: center;
-    padding: 30px;
-}
 .intro {
     display: flex;
     flex-direction: column;
@@ -125,6 +115,60 @@ main {
         align-items: center;
         width: 100vw;
         margin-top: 2rem;
+    }
+    .title-1{
+        font-size: 3rem;
+        color: rgb(52,110,80);
+        text-align: center;
+    }
+    .title-2 {
+        font-size: 1.5rem;
+        color: rgb(209, 225, 226);
+        text-align: center;
+    }
+    .paragraph {
+        margin-top: 1rem;
+        width: 60vw;
+        font-size: 1rem;
+        color: rgb(209, 225, 226);
+        white-space: normal;
+        /* text-align: center; */
+        line-height: 0.8rem;
+    }
+    footer {
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-self: center;
+        width: 100%;
+        bottom: 2.5rem;
+        color: rgb(209, 225, 226);
+        flex-wrap: wrap;
+    }
+    .input-container {
+        width: 100%;
+        position: absolute;
+        bottom: 4rem;
+        display: flex;
+        /* align-items: center; */
+        justify-content: center;
+        max-height: 10rem;
+        padding: 0;
+        border: 0;
+    }
+    
+    textarea {
+        width: 60vw;
+        border-radius: 15px;
+        padding: 15px;
+        resize: none;
+        background-color: #494a57;
+        font-size: 0.8rem;
+        color: rgb(220, 231, 231);
+        outline: none;/* Remove the default border style */
+        overflow: auto;
+        max-height: 10rem;
+        bottom: 0;
     }
 }
 
