@@ -2,9 +2,10 @@ const express = require('express')
 const { Configuration, OpenAIApi } = require("openai")
 const dotenv = require('dotenv')
 const cors = require('cors')
+const cookieParser = require('cookie-parser');
 dotenv.config();
 
-const configuration = new Configuration({
+const defaultConfiguration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
@@ -14,6 +15,7 @@ const port = 3000;
 app.use(cors())
 app.use(express.json())
 app.use(express.static('../client/src'));
+app.use(cookieParser());
 
 app.get("/", async (req, res) => {
     res.json({
@@ -23,30 +25,40 @@ app.get("/", async (req, res) => {
 
 app.post("/", async (req, res) => {
     try {
-        const model = req.body.model;
-        const content = req.body.content;
-        let key = req.body.key;
-        console.log(req.body)
-        
-        if(key.length === 0){
-            key = configuration.apiKey;
+        const model = req.body.model || "gpt-3.5-turbo";
+        const content = req.body.content || "hi";
+        let key = req.body.key || defaultConfiguration.apiKey;
+        // console.log(req.body);
+        const context = req.cookies.context;
+        const contextArr = (context)?JSON.parse(context):[];
+
+        //save 6 contexts
+        if(contextArr.length > 6){
+            while(contextArr.length > 6){
+                contextArr.shift();
+            }
         }
 
-        const openai = new OpenAIApi({apiKey:key})
+        contextArr.push({role: "user",content: content})
+        const openai = new OpenAIApi(new Configuration({apiKey: key}));
         const completion = await openai.createChatCompletion({
             model: model,
-            messages: [{role: "user", content: content}],
+            //messages: [{role: "user", content: content}],
+            messages: contextArr,
             temperature: 0.5,
             frequency_penalty: 0.5,
         });
-        res.status(200).send(completion.data.choices[0].message)
-        console.log(completion.data.choices[0].message);
+        contextArr.push(completion.data.choices[0].message);
+        res.cookie('context', JSON.stringify(contextArr), { maxAge: 3600000 });
+        //console.log(contextArr);
+            res.status(200).send(completion.data);
+            //console.log(completion.data.choices[0].message);
     } catch (error) {
         console.error(error);
         res.status(500).send(error);
     }
 })
 
-app.listen(port, "0.0.0.0",() => {
+app.listen(port, () => {
     console.log(`app is running at https://localhost${port}`)
 })
