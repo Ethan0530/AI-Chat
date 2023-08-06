@@ -9,16 +9,6 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-// let axiosRequestConfig = {
-//   proxy: {
-//     host: "127.0.0.1",
-//     port: "10808",
-//     protocol: "socks",
-//   }
-// }
-
-// console.log(axiosRequestConfig)
-
 (async function() {
   try {
     const completion = await openai.createChatCompletion({
@@ -26,7 +16,6 @@ const openai = new OpenAIApi(configuration);
       messages: [{role: "user", content: "hi, my name is sd1"},{role:"assistant", content: "Hello sd1! How can I assist you today?"},{role:"user", content:"what's my name"}],
     });
     console.log(completion.data.choices[0].message);
-    // console.log(completion)
   } catch (error) {
     console.error(error)
   }
