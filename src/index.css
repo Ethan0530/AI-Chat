@@ -71,7 +71,7 @@ textarea {
     font-size: 1.2rem;
     color: rgb(220, 231, 231);
     outline: none;/* Remove the default border style */
-    overflow: scroll;
+    overflow: auto;
     max-height: 10rem;
     bottom: 0;
 }
