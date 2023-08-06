@@ -1,6 +1,8 @@
 let sign = true;
 
 const listContainer = document.querySelector('#list');
+const textArea = document.querySelector('textarea');
+const btn = document.querySelector('.btn');
 
 //create new list item element and return it
 function createListItem(text,styleOptions){
@@ -14,10 +16,10 @@ function createListItem(text,styleOptions){
 }
 
 function refreshScroll(element){
-    element.scrollTop = element.scrollHeight;
+    setTimeout(() => {
+        element.scrollTop = element.scrollHeight;
+    },20)
 }
-
-const textArea = document.querySelector('textarea');
 
 function getModel(){
     const selectElement = document.querySelector('select');
@@ -30,68 +32,7 @@ function getInputApiKey(){
     return inputElement.value;
 }
 
-textArea.addEventListener('keydown', (e) => {
-    if(e.key === 'Enter' && !e.shiftKey){
-        e.preventDefault();
-        const text = textArea.value.trim();
-        if(text === '') return
-
-        //remove the default init element
-        if(sign === true){
-            const intro = document.querySelector(".intro");
-            intro.remove();
-            sign = false;
-        }
-
-        let child = createListItem("user: " + text);
-        listContainer.appendChild(child);
-        textArea.value = '';
-        resizeHeight();
-        textArea.readOnly = true;
-
-        let answer = createListItem("Bot: ",{backgroundColor:"#3F414D"});
-        listContainer.appendChild(answer);
-
-        let count = 0;
-        let interval = setInterval(() => {
-            if(count === 5){
-                answer.innerHTML = "Bot: ";
-                count = 0
-            }
-            answer.innerHTML += "."
-            count++;
-        },1000)
-
-        getAIResponse(getInputApiKey(),getModel(),text)
-        .then((data) => {
-
-            clearInterval(interval);
-            answer.innerHTML = "Bot: ";
-
-            if(data.error !== undefined){
-                return JSON.stringify(data);
-            }else return data.choices[0].message.content;
-        }).then((data) => {
-            typeText(answer,data);
-
-            textArea.readOnly = false;
-            setTimeout(() => {
-                refreshScroll(listContainer);
-            },20)
-        }).catch((err) => {
-            clearInterval(interval);
-            answer.innerHTML = "Bot: ";
-            typeText(answer,data);
-
-            textArea.readOnly = false;
-            setTimeout(() => {
-                refreshScroll(listContainer);
-            },20)
-        })
-    }
-})
-
-function typeText(element,text){
+function typeText(element,text,callback){
     let index = 0;
     let interval = setInterval(() => {
         if(index < text.length){
@@ -99,8 +40,17 @@ function typeText(element,text){
             index++;
         }else{
             clearInterval(interval);
+            if(callback) callback();
         }
     }, 10)
+}
+
+function disableElement(element){
+    element.disabled = true;
+}
+
+function enableElement(element){
+    element.disabled = false;
 }
 
 /**
@@ -144,6 +94,88 @@ function resizeHeight() {
     }
 }
 
+function checkSign(){
+    //remove the default init element
+    if(sign === true){
+        const intro = document.querySelector(".intro");
+        intro.remove();
+        sign = false;
+    }
+}
+
+function thinking(element){
+    let count = 0;
+    let interval = setInterval(() => {
+        if(count === 5){
+            element.innerHTML = "Bot: ";
+            count = 0
+        }
+        element.innerHTML += "."
+        count++;
+    },1000)
+    return interval;
+}
+
+function main(){
+    const text = textArea.value.trim();
+    if(text === '') return;
+
+    checkSign();
+
+    //add askElement
+    let askElement = createListItem("user: " + text);
+    listContainer.appendChild(askElement);
+
+    //clear the text in textArea and resize it's height
+    textArea.value = '';
+    resizeHeight();
+
+    //disable element until type full answer
+    disableElement(textArea);
+    disableElement(btn);
+
+    //create answerElement
+    let answerElement = createListItem("Bot: ",{backgroundColor:"#3F414D"});
+    listContainer.appendChild(answerElement);
+
+    //add thinking effect on answerElement
+    let interval = thinking(answerElement);
+
+    //do fetch
+    getAIResponse(getInputApiKey(),getModel(),text)
+    .then((data) => {
+        //remove the thinking effect and do some basic check
+        clearInterval(interval);
+        answerElement.innerHTML = "Bot: ";
+
+        if(data.error !== undefined){
+            return JSON.stringify(data);
+        }else return data.choices[0].message.content;
+    }).then((data) => {
+        //typing answer and do callback after typing
+        typeText(answerElement,data,() => {
+            enableElement(textArea);
+            enableElement(btn);
+            refreshScroll(listContainer);
+        });
+    }).catch((err) => {
+        clearInterval(interval);
+        answerElement.innerHTML = "Bot: ";
+        typeText(answerElement,data,() => {
+            enableElement(textArea);
+            enableElement(btn);
+            refreshScroll(listContainer);
+        });    
+    })   
+}
+
+btn.addEventListener('click', main)
+textArea.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' && !e.shiftKey){
+        e.preventDefault();
+        main();
+    }
+})
 textArea.addEventListener('input', resizeHeight);
 
 function init(){
@@ -156,62 +188,3 @@ function init(){
 }
 
 init();
-
-const btn = document.querySelector('.btn');
-btn.addEventListener('click', () => {
-    const text = textArea.value.trim();
-    if(text === '') return
-
-    //remove the default init element
-    if(sign === true){
-        const intro = document.querySelector(".intro");
-        intro.remove();
-        sign = false;
-    }
-
-    let child = createListItem("user: " + text);
-    listContainer.appendChild(child);
-    textArea.value = '';
-    resizeHeight();
-    textArea.readOnly = true;
-
-    let answer = createListItem("Bot: ",{backgroundColor:"#3F414D"});
-    listContainer.appendChild(answer);
-
-    let count = 0;
-    let interval = setInterval(() => {
-        if(count === 5){
-            answer.innerHTML = "Bot: ";
-            count = 0
-        }
-        answer.innerHTML += "."
-        count++;
-    },1000)
-
-    getAIResponse(getInputApiKey(),getModel(),text)
-    .then((data) => {
-
-        clearInterval(interval);
-        answer.innerHTML = "Bot: ";
-
-        if(data.error !== undefined){
-            return JSON.stringify(data);
-        }else return data.choices[0].message.content;
-    }).then((data) => {
-        typeText(answer,data);
-
-        textArea.readOnly = false;
-        setTimeout(() => {
-            refreshScroll(listContainer);
-        },20)
-    }).catch((err) => {
-        clearInterval(interval);
-        answer.innerHTML = "Bot: ";
-        typeText(answer,data);
-
-        textArea.readOnly = false;
-        setTimeout(() => {
-            refreshScroll(listContainer);
-        },20)
-    })
-})
